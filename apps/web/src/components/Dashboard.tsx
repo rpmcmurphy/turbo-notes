@@ -88,20 +88,41 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-stone-100">
-      <header className="flex justify-between items-center py-4 px-8 bg-white border-b border-stone-200">
-        <h1 className="text-base font-semibold tracking-wide text-stone-800">
-          Notes
-        </h1>
+    <div className="h-screen flex flex-col bg-bg">
+      {/* Header */}
+      <header className="flex justify-between items-center h-14 px-6 bg-surface border-b border-line">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <path d="M14 2v6h6" />
+            </svg>
+          </div>
+          <h1 className="text-sm font-semibold tracking-tight text-ink">
+            Notes
+          </h1>
+        </div>
         <button
           onClick={onLogout}
-          className="text-xs text-stone-500 hover:text-stone-900 transition-colors"
+          className="text-xs text-ink-3 hover:text-ink transition-colors px-3 py-1.5 rounded-md hover:bg-bg"
         >
           Logout
         </button>
       </header>
+
+      {/* Body */}
       <div className="flex-1 flex overflow-hidden">
-        <div className="w-64 bg-white border-r border-stone-200 overflow-y-auto">
+        {/* Sidebar */}
+        <div className="w-60 bg-surface border-r border-line overflow-y-auto">
           <Sidebar
             categories={categories}
             tags={tags}
@@ -124,7 +145,9 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
             onDataChange={loadData}
           />
         </div>
-        <div className="w-80 bg-white border-r border-stone-200 overflow-y-auto">
+
+        {/* Note List */}
+        <div className="w-80 bg-surface border-r border-line overflow-y-auto">
           <NoteList
             notes={notes}
             search={search}
@@ -134,7 +157,9 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
             selectedNoteId={selectedNote?.id}
           />
         </div>
-        <div className="flex-1 bg-stone-50 overflow-y-auto">
+
+        {/* Editor */}
+        <div className="flex-1 bg-bg overflow-y-auto">
           {selectedNote ? (
             <NoteEditor
               note={selectedNote}
@@ -144,8 +169,26 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
               onNoteDeleted={handleNoteDeleted}
             />
           ) : (
-            <div className="h-full flex items-center justify-center text-stone-400 text-sm">
-              Select a note to view
+            <div className="h-full flex flex-col items-center justify-center text-ink-3">
+              <div className="w-14 h-14 rounded-xl bg-surface border border-line flex items-center justify-center mb-3">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <path d="M14 2v6h6" />
+                  <path d="M16 13H8" />
+                  <path d="M16 17H8" />
+                  <path d="M10 9H8" />
+                </svg>
+              </div>
+              <p className="text-sm">Select a note to view</p>
             </div>
           )}
         </div>

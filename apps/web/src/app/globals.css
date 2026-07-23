@@ -1,28 +1,129 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #fcfcfc; /* Slightly cleaner white */
-  --color-ink: #1c1917;   /* Stone 900 */
-  --color-accent: #a8a29e; /* Stone 400 */
-  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --color-bg: #f4f2ee;
+  --color-surface: #ffffff;
+  --color-sidebar: #eceae5;
+  --color-sidebar-hover: #ddd9d3;
+  --color-ink: #1a1917;
+  --color-ink-2: #5c5a55;
+  --color-ink-3: #9b9890;
+  --color-paper: #ffffff;
+  --color-accent: #6366f1;
+  --color-accent-soft: #eef2ff;
+  --color-green: #10b981;
+  --color-green-soft: #ecfdf5;
+  --color-red: #ef4444;
+  --color-red-soft: #fef2f2;
+  --color-amber: #f59e0b;
+  --color-amber-soft: #fffbeb;
+  --color-violet: #8b5cf6;
+  --color-violet-soft: #f5f3ff;
+  --color-cyan: #06b6d4;
+  --color-cyan-soft: #ecfeff;
+  --color-line: rgba(0, 0, 0, 0.08);
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-sm: 7px;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+:root {
+  --bg: #f4f2ee;
+  --surface: #ffffff;
+  --sidebar-bg: #eceae5;
+  --sidebar-hover: #ddd9d3;
+  --text: #1a1917;
+  --text-2: #5c5a55;
+  --text-3: #9b9890;
+  --accent: #6366f1;
+  --accent-soft: #eef2ff;
+  --green: #10b981;
+  --green-soft: #ecfdf5;
+  --red: #ef4444;
+  --red-soft: #fef2f2;
+  --amber: #f59e0b;
+  --amber-soft: #fffbeb;
+  --violet: #8b5cf6;
+  --violet-soft: #f5f3ff;
+  --cyan: #06b6d4;
+  --cyan-soft: #ecfeff;
+  --border-color: rgba(0, 0, 0, 0.08);
+  --radius: 14px;
+  --radius-sm: 10px;
+  --radius-xs: 7px;
 }
 
 body {
-  background-color: #f5f5f4; /* Stone 100 for the app background */
+  background-color: var(--color-bg);
   color: var(--color-ink);
-  font-size: 14px; /* Readable typography */
+  font-size: 14px;
   line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Minimal scrollbar */
+/* Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d6d3d1;
+  background: rgba(0, 0, 0, 0.12);
   border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
 }
 ::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* Custom checkbox */
+.custom-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid var(--color-ink-3);
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+  background: transparent;
+}
+.custom-checkbox:checked {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+.custom-checkbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.custom-checkbox:hover:not(:checked) {
+  border-color: var(--color-ink-2);
+}
+
+/* Select reset */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none;
+}
+
+/* Input focus utility */
+.focus-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }

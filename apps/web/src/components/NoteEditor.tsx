@@ -10,6 +10,7 @@ import {
   Link as LinkIcon,
   X,
   Plus,
+  ChevronDown,
 } from "lucide-react";
 
 export default function NoteEditor({
@@ -30,14 +31,11 @@ export default function NoteEditor({
     note.tags?.map((t: any) => t.tag.id) || [],
   );
 
-  // URL State
   const [urls, setUrls] = useState<any[]>(note.urls || []);
 
-  // Attachment State
   const [tempAttachments, setTempAttachments] = useState<any[]>([]);
   const [attachmentPreviews, setAttachmentPreviews] = useState<any[]>([]);
 
-  // Zoom Modal State
   const [zoomImage, setZoomImage] = useState<string | null>(null);
 
   const [isEditing, setIsEditing] = useState(
@@ -143,8 +141,14 @@ export default function NoteEditor({
     onNoteUpdated(updated);
   };
 
+  const statusColors: Record<string, string> = {
+    draft: "#f59e0b",
+    published: "#10b981",
+    archived: "#9b9890",
+  };
+
   return (
-    <div className="p-10 max-w-3xl mx-auto bg-white m-6 rounded-lg border border-stone-200 shadow-sm relative">
+    <div className="p-8 max-w-3xl mx-auto">
       {/* Zoom Modal */}
       {zoomImage && (
         <div
@@ -154,345 +158,385 @@ export default function NoteEditor({
           <img
             src={zoomImage}
             alt="Zoomed"
-            className="max-w-full max-h-full object-contain rounded shadow-2xl"
+            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
           />
-          <button className="absolute top-6 right-6 text-white text-3xl hover:text-stone-300">
+          <button className="absolute top-6 right-6 text-white text-3xl hover:text-ink-3">
             ×
           </button>
         </div>
       )}
 
-      <div className="flex justify-between items-center mb-8 pb-4 border-b border-stone-100">
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value as any)}
-          disabled={!isEditing}
-          className="text-xs bg-stone-100 border border-stone-200 rounded-md px-2 py-1 focus:outline-none focus:ring-1 focus:ring-stone-400 text-stone-600 capitalize"
-        >
-          <option value="draft">Draft</option>
-          <option value="published">Published</option>
-          <option value="archived">Archived</option>
-        </select>
-        <div className="flex gap-4">
-          {isEditing ? (
-            <>
-              <button
-                onClick={handleCancel}
-                className="text-xs text-stone-500 hover:text-stone-900"
+      <div className="bg-surface rounded-lg border border-line shadow-sm p-8">
+        {/* Header Row */}
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-line">
+          <div className="flex items-center gap-2">
+            <span
+              className="w-1.5 h-1.5 rounded-full"
+              style={{ backgroundColor: statusColors[status] || "#9b9890" }}
+            />
+            <div className="relative">
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value as any)}
+                disabled={!isEditing}
+                className="appearance-none bg-bg border border-line rounded-md pl-2.5 pr-7 py-1 text-xs text-ink-2 focus-input cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed capitalize"
               >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                className="text-xs text-white bg-stone-800 hover:bg-stone-700 px-3 py-1 rounded-md"
-              >
-                Save
-              </button>
-            </>
-          ) : (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="text-xs text-stone-600 hover:text-stone-900 border border-stone-200 px-3 py-1 rounded-md hover:bg-stone-50"
-            >
-              Edit
-            </button>
-          )}
-          <button
-            onClick={handleDelete}
-            className="text-xs text-stone-400 hover:text-red-500 flex items-center gap-1 px-2"
-          >
-            <Trash2 size={14} />
-          </button>
-        </div>
-      </div>
-
-      {isEditing ? (
-        <input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full text-2xl font-semibold bg-transparent border-none focus:outline-none mb-4 text-stone-900"
-        />
-      ) : (
-        <h1 className="text-2xl font-semibold mb-4 text-stone-900">
-          {note.title}
-        </h1>
-      )}
-
-      <div className="text-xs text-stone-400 mb-8 flex items-center gap-2">
-        <span>{new Date(note.createdAt).toLocaleDateString()}</span>
-        <span>•</span>
-        <span>by {note.user.username}</span>
-      </div>
-
-      {isEditing ? (
-        <textarea
-          value={summary}
-          onChange={(e) => setSummary(e.target.value)}
-          placeholder="Summary..."
-          className="w-full p-0 bg-transparent border-none focus:outline-none text-sm text-stone-500 mb-4 resize-none italic"
-          rows={2}
-        />
-      ) : (
-        note.summary && (
-          <p className="text-sm text-stone-500 mb-4 italic border-l-2 border-stone-200 pl-4">
-            {note.summary}
-          </p>
-        )
-      )}
-
-      {isEditing ? (
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="w-full p-3 bg-stone-50 border border-stone-100 rounded-md focus:outline-none focus:ring-1 focus:ring-stone-300 text-sm text-stone-800 mb-8 resize-none min-h-[200px]"
-        />
-      ) : (
-        <div className="text-sm text-stone-700 whitespace-pre-wrap mb-8 leading-relaxed">
-          {note.content}
-        </div>
-      )}
-
-      {/* Categories & Tags */}
-      <div className="flex flex-wrap gap-6 mb-8 text-xs">
-        {/* Categories */}
-        <div className="flex items-center gap-2">
-          <span className="text-stone-400 uppercase tracking-wider">
-            Categories:
-          </span>
-          {isEditing ? (
-            <select
-              multiple
-              value={categoryIds}
-              onChange={(e) =>
-                setCategoryIds(
-                  Array.from(e.target.selectedOptions).map((o) => o.value),
-                )
-              }
-              className="bg-stone-50 border border-stone-200 p-1 rounded-md text-stone-700"
-            >
-              {categories.map((c: Category) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <div className="flex gap-2 flex-wrap">
-              {note.categories?.map(({ category }: any) => (
-                <span
-                  key={category.id}
-                  className="text-stone-600 bg-stone-100 px-2 py-0.5 rounded-md border border-stone-200"
-                >
-                  {category.name}
-                </span>
-              ))}
-              {note.categories?.length === 0 && (
-                <span className="text-stone-400">None</span>
-              )}
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+                <option value="archived">Archived</option>
+              </select>
+              <ChevronDown
+                size={12}
+                className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-ink-3"
+              />
             </div>
-          )}
-        </div>
-
-        {/* Tags */}
-        <div className="flex items-center gap-2">
-          <span className="text-stone-400 uppercase tracking-wider">Tags:</span>
-          {isEditing ? (
-            <select
-              multiple
-              value={tagIds}
-              onChange={(e) =>
-                setTagIds(
-                  Array.from(e.target.selectedOptions).map((o) => o.value),
-                )
-              }
-              className="bg-stone-50 border border-stone-200 p-1 rounded-md text-stone-700"
-            >
-              {tags.map((t: Tag) => (
-                <option key={t.id} value={t.id}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <div className="flex gap-2 flex-wrap">
-              {note.tags?.map(({ tag }: any) => (
-                <span
-                  key={tag.id}
-                  className="text-stone-600 bg-stone-100 px-2 py-0.5 rounded-md border border-stone-200"
-                >
-                  {tag.name}
-                </span>
-              ))}
-              {note.tags?.length === 0 && (
-                <span className="text-stone-400">None</span>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Attachments */}
-      <div className="mb-8">
-        <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-3">
-          Attachments
-        </h3>
-        <div className="grid grid-cols-4 gap-4">
-          {/* Existing Attachments */}
-          {(note.attachments || []).map((att: any) => (
-            <div
-              key={att.id}
-              className="relative group border border-stone-200 rounded-md overflow-hidden bg-stone-50"
-            >
-              {att.mimetype.startsWith("image/") ? (
-                <div
-                  onClick={() =>
-                    setZoomImage(
-                      `http://localhost:3000/storage/${att.filename}`,
-                    )
-                  }
-                  className="cursor-zoom-in w-full h-24 overflow-hidden"
-                >
-                  <img
-                    src={`http://localhost:3000/storage/${att.filename}`}
-                    alt={att.originalName}
-                    className="w-full h-24 object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="w-full h-24 flex flex-col items-center justify-center text-stone-400">
-                  <FileText size={24} />
-                  <span className="text-[10px] mt-1 uppercase">
-                    {att.mimetype.split("/")[1]}
-                  </span>
-                </div>
-              )}
-              <p className="text-[10px] text-stone-500 truncate p-1 bg-white border-t border-stone-100">
-                {att.originalName}
-              </p>
-              {isEditing && (
+          </div>
+          <div className="flex gap-3 items-center">
+            {isEditing ? (
+              <>
                 <button
-                  onClick={() => handleDeleteAttachment(att.id)}
-                  className="absolute top-1 right-1 bg-stone-900/70 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={handleCancel}
+                  className="text-xs text-ink-3 hover:text-ink transition-colors px-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSave}
+                  className="text-xs text-white bg-accent hover:opacity-90 px-3.5 py-1.5 rounded-md font-medium transition-opacity"
+                >
+                  Save
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="text-xs text-ink-2 hover:text-ink border border-line hover:bg-bg px-3.5 py-1.5 rounded-md transition-colors font-medium"
+              >
+                Edit
+              </button>
+            )}
+            <button
+              onClick={handleDelete}
+              className="text-ink-3 hover:text-red p-1 transition-colors"
+            >
+              <Trash2 size={14} />
+            </button>
+          </div>
+        </div>
+
+        {/* Title */}
+        {isEditing ? (
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full text-2xl font-semibold bg-transparent border-none focus:outline-none mb-2 text-ink placeholder:text-ink-3"
+            placeholder="Note title..."
+          />
+        ) : (
+          <h1 className="text-2xl font-semibold mb-2 text-ink">{note.title}</h1>
+        )}
+
+        {/* Metadata */}
+        <div className="text-xs text-ink-3 mb-7 flex items-center gap-2">
+          <span>{new Date(note.createdAt).toLocaleDateString()}</span>
+          <span>·</span>
+          <span>by {note.user.username}</span>
+        </div>
+
+        {/* Summary */}
+        {isEditing ? (
+          <textarea
+            value={summary}
+            onChange={(e) => setSummary(e.target.value)}
+            placeholder="Summary..."
+            className="w-full p-0 bg-transparent border-none focus:outline-none text-sm text-ink-2 mb-6 resize-none italic placeholder:text-ink-3"
+            rows={2}
+          />
+        ) : (
+          note.summary && (
+            <p className="text-sm text-ink-2 mb-6 italic border-l-2 border-line pl-4">
+              {note.summary}
+            </p>
+          )
+        )}
+
+        {/* Content */}
+        {isEditing ? (
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full p-3.5 bg-bg border border-line rounded-md focus-input text-sm text-ink mb-8 resize-none min-h-[200px] transition-all placeholder:text-ink-3"
+            placeholder="Write your note..."
+          />
+        ) : (
+          <div className="text-sm text-ink-2 whitespace-pre-wrap mb-8 leading-relaxed">
+            {note.content}
+          </div>
+        )}
+
+        {/* Categories & Tags */}
+        <div className="flex flex-wrap gap-x-8 gap-y-4 mb-8">
+          {/* Categories */}
+          <div className="space-y-2">
+            <span className="text-[11px] uppercase tracking-wider text-ink-3 font-medium block">
+              Categories
+            </span>
+            {isEditing ? (
+              <div className="flex flex-wrap gap-2">
+                {categories.map((c: Category) => (
+                  <label
+                    key={c.id}
+                    className="flex items-center gap-1.5 cursor-pointer px-2 py-1 rounded-md hover:bg-bg transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      className="custom-checkbox"
+                      checked={categoryIds.includes(c.id)}
+                      onChange={() =>
+                        setCategoryIds((prev: string[]) =>
+                          prev.includes(c.id)
+                            ? prev.filter((i) => i !== c.id)
+                            : [...prev, c.id],
+                        )
+                      }
+                    />
+                    <span className="text-xs text-ink-2 select-none">
+                      {c.name}
+                    </span>
+                  </label>
+                ))}
+                {categories.length === 0 && (
+                  <span className="text-xs text-ink-3">None</span>
+                )}
+              </div>
+            ) : (
+              <div className="flex gap-1.5 flex-wrap">
+                {note.categories?.map(({ category }: any) => (
+                  <span
+                    key={category.id}
+                    className="text-xs text-ink-2 bg-bg px-2 py-0.5 rounded-md border border-line"
+                  >
+                    {category.name}
+                  </span>
+                ))}
+                {note.categories?.length === 0 && (
+                  <span className="text-xs text-ink-3">None</span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Tags */}
+          <div className="space-y-2">
+            <span className="text-[11px] uppercase tracking-wider text-ink-3 font-medium block">
+              Tags
+            </span>
+            {isEditing ? (
+              <div className="flex flex-wrap gap-1.5">
+                {tags.map((t: Tag) => (
+                  <button
+                    key={t.id}
+                    onClick={() =>
+                      setTagIds((prev: string[]) =>
+                        prev.includes(t.id)
+                          ? prev.filter((i) => i !== t.id)
+                          : [...prev, t.id],
+                      )
+                    }
+                    className={`px-2.5 py-1 text-xs rounded-md transition-all ${
+                      tagIds.includes(t.id)
+                        ? "bg-accent-soft text-accent border border-accent/20"
+                        : "bg-bg text-ink-2 border border-line hover:bg-sidebar-hover"
+                    }`}
+                  >
+                    {t.name}
+                  </button>
+                ))}
+                {tags.length === 0 && (
+                  <span className="text-xs text-ink-3">None</span>
+                )}
+              </div>
+            ) : (
+              <div className="flex gap-1.5 flex-wrap">
+                {note.tags?.map(({ tag }: any) => (
+                  <span
+                    key={tag.id}
+                    className="text-xs text-ink-2 bg-bg px-2 py-0.5 rounded-md border border-line"
+                  >
+                    {tag.name}
+                  </span>
+                ))}
+                {note.tags?.length === 0 && (
+                  <span className="text-xs text-ink-3">None</span>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Attachments */}
+        <div className="mb-8">
+          <h3 className="text-[11px] uppercase tracking-wider text-ink-3 font-medium mb-3">
+            Attachments
+          </h3>
+          <div className="grid grid-cols-4 gap-3">
+            {/* Existing Attachments */}
+            {(note.attachments || []).map((att: any) => (
+              <div
+                key={att.id}
+                className="relative group border border-line rounded-md overflow-hidden bg-bg"
+              >
+                {att.mimetype.startsWith("image/") ? (
+                  <div
+                    onClick={() =>
+                      setZoomImage(
+                        `http://localhost:3000/storage/${att.filename}`,
+                      )
+                    }
+                    className="cursor-zoom-in w-full h-24 overflow-hidden"
+                  >
+                    <img
+                      src={`http://localhost:3000/storage/${att.filename}`}
+                      alt={att.originalName}
+                      className="w-full h-24 object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-24 flex flex-col items-center justify-center text-ink-3">
+                    <FileText size={24} />
+                    <span className="text-[10px] mt-1 uppercase">
+                      {att.mimetype.split("/")[1]}
+                    </span>
+                  </div>
+                )}
+                <p className="text-[10px] text-ink-3 truncate px-1.5 py-1 bg-surface border-t border-line">
+                  {att.originalName}
+                </p>
+                {isEditing && (
+                  <button
+                    onClick={() => handleDeleteAttachment(att.id)}
+                    className="absolute top-1.5 right-1.5 bg-black/60 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X size={10} />
+                  </button>
+                )}
+              </div>
+            ))}
+
+            {/* Temp Attachments */}
+            {attachmentPreviews.map((att, i) => (
+              <div
+                key={i}
+                className="relative group border border-accent/30 rounded-md overflow-hidden bg-accent-soft"
+              >
+                {att.isImage ? (
+                  <div
+                    onClick={() => setZoomImage(att.url)}
+                    className="cursor-zoom-in w-full h-24 overflow-hidden"
+                  >
+                    <img
+                      src={att.url}
+                      alt={att.name}
+                      className="w-full h-24 object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full h-24 flex flex-col items-center justify-center text-ink-3">
+                    <FileText size={24} />
+                  </div>
+                )}
+                <p className="text-[10px] text-ink-3 truncate px-1.5 py-1 bg-surface border-t border-line">
+                  {att.name}
+                </p>
+                <button
+                  onClick={() => handleRemoveTempAttachment(i)}
+                  className="absolute top-1.5 right-1.5 bg-red text-white p-1 rounded-full"
                 >
                   <X size={10} />
                 </button>
-              )}
-            </div>
-          ))}
-
-          {/* Temp Attachments */}
-          {attachmentPreviews.map((att, i) => (
-            <div
-              key={i}
-              className="relative group border border-blue-200 rounded-md overflow-hidden bg-blue-50"
-            >
-              {att.isImage ? (
-                <div
-                  onClick={() => setZoomImage(att.url)}
-                  className="cursor-zoom-in w-full h-24 overflow-hidden"
-                >
-                  <img
-                    src={att.url}
-                    alt={att.name}
-                    className="w-full h-24 object-cover"
-                  />
-                </div>
-              ) : (
-                <div className="w-full h-24 flex flex-col items-center justify-center text-stone-400">
-                  <FileText size={24} />
-                </div>
-              )}
-              <p className="text-[10px] text-stone-500 truncate p-1 bg-white border-t border-stone-100">
-                {att.name}
-              </p>
-              <button
-                onClick={() => handleRemoveTempAttachment(i)}
-                className="absolute top-1 right-1 bg-red-500/70 text-white p-1 rounded-full"
-              >
-                <X size={10} />
-              </button>
-            </div>
-          ))}
-
-          {isEditing && (
-            <label className="w-full h-[120px] border border-dashed border-stone-300 flex items-center justify-center cursor-pointer hover:bg-stone-50 rounded-md text-stone-400 hover:text-stone-500">
-              <input
-                type="file"
-                multiple
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-              <ImageIcon size={20} />
-            </label>
-          )}
-        </div>
-      </div>
-
-      {/* URLs */}
-      <div className="mb-8">
-        <h3 className="text-xs uppercase tracking-wider text-stone-400 mb-3">
-          Links
-        </h3>
-
-        {isEditing ? (
-          <div className="space-y-3">
-            {urls.map((url, index) => (
-              <div key={index} className="flex gap-2 items-center">
-                <input
-                  value={url.title || ""}
-                  onChange={(e) => {
-                    const newUrls = [...urls];
-                    newUrls[index].title = e.target.value;
-                    setUrls(newUrls);
-                  }}
-                  placeholder="Title"
-                  className="w-1/3 px-2 py-1 bg-stone-50 border border-stone-200 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-stone-300"
-                />
-                <input
-                  value={url.url}
-                  onChange={(e) => {
-                    const newUrls = [...urls];
-                    newUrls[index].url = e.target.value;
-                    setUrls(newUrls);
-                  }}
-                  placeholder="https://..."
-                  className="flex-1 px-2 py-1 bg-stone-50 border border-stone-200 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-stone-300"
-                />
-                <button
-                  onClick={() => setUrls(urls.filter((_, i) => i !== index))}
-                  className="text-stone-400 hover:text-red-500 p-1"
-                >
-                  <X size={14} />
-                </button>
               </div>
             ))}
-            <button
-              onClick={() =>
-                setUrls([...urls, { title: "", url: "", description: "" }])
-              }
-              className="text-xs text-stone-500 hover:text-stone-900 flex items-center gap-1 mt-2"
-            >
-              <Plus size={12} /> Add Link
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-2">
-            {(note.urls || []).map((url: any) => (
-              <a
-                key={url.id}
-                href={url.url}
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-800 hover:underline"
-              >
-                <LinkIcon size={14} /> {url.title || url.url}
-              </a>
-            ))}
-            {(!note.urls || note.urls.length === 0) && (
-              <p className="text-xs text-stone-400">No links added.</p>
+
+            {isEditing && (
+              <label className="w-full h-[120px] border border-dashed border-line flex items-center justify-center cursor-pointer hover:bg-bg hover:border-accent rounded-md text-ink-3 hover:text-accent transition-colors">
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                <ImageIcon size={20} />
+              </label>
             )}
           </div>
-        )}
+        </div>
+
+        {/* Links */}
+        <div>
+          <h3 className="text-[11px] uppercase tracking-wider text-ink-3 font-medium mb-3">
+            Links
+          </h3>
+
+          {isEditing ? (
+            <div className="space-y-2.5">
+              {urls.map((url, index) => (
+                <div key={index} className="flex gap-2 items-center">
+                  <input
+                    value={url.title || ""}
+                    onChange={(e) => {
+                      const newUrls = [...urls];
+                      newUrls[index].title = e.target.value;
+                      setUrls(newUrls);
+                    }}
+                    placeholder="Title"
+                    className="w-1/3 px-2.5 py-1.5 bg-bg border border-line rounded-md text-xs text-ink placeholder:text-ink-3 focus-input transition-all"
+                  />
+                  <input
+                    value={url.url}
+                    onChange={(e) => {
+                      const newUrls = [...urls];
+                      newUrls[index].url = e.target.value;
+                      setUrls(newUrls);
+                    }}
+                    placeholder="https://..."
+                    className="flex-1 px-2.5 py-1.5 bg-bg border border-line rounded-md text-xs text-ink placeholder:text-ink-3 focus-input transition-all"
+                  />
+                  <button
+                    onClick={() => setUrls(urls.filter((_, i) => i !== index))}
+                    className="text-ink-3 hover:text-red p-1 transition-colors"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+              <button
+                onClick={() =>
+                  setUrls([...urls, { title: "", url: "", description: "" }])
+                }
+                className="text-xs text-ink-2 hover:text-accent flex items-center gap-1 mt-2 transition-colors"
+              >
+                <Plus size={12} /> Add Link
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {(note.urls || []).map((url: any) => (
+                <a
+                  key={url.id}
+                  href={url.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-2 text-sm text-accent hover:underline"
+                >
+                  <LinkIcon size={14} /> {url.title || url.url}
+                </a>
+              ))}
+              {(!note.urls || note.urls.length === 0) && (
+                <p className="text-xs text-ink-3">No links added.</p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

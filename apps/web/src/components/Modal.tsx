@@ -9,18 +9,18 @@ export default function Modal({
 }) {
   return (
     <div
-      className="fixed inset-0 bg-stone-900/20 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/20 flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div
-        className="bg-paper p-6 w-full max-w-md shadow-xl"
+        className="bg-surface p-7 w-full max-w-md rounded-lg border border-line shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-sm font-medium">{title}</h2>
+        <div className="flex justify-between items-center mb-5">
+          <h2 className="text-sm font-semibold text-ink">{title}</h2>
           <button
             onClick={onClose}
-            className="text-stone-400 hover:text-ink text-xl leading-none"
+            className="w-6 h-6 flex items-center justify-center rounded-md text-ink-3 hover:text-ink hover:bg-bg transition-colors text-lg leading-none"
           >
             ×
           </button>
