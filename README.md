@@ -1,159 +1,251 @@
-# Turborepo starter
+# Notes
 
-This Turborepo starter is maintained by the Turborepo core team.
+![Notes Screenshot](assets/screenshot.png)
 
-## Using this example
+A clean, distraction-free note-taking application built with **NestJS**, **Next.js**, **PostgreSQL**, **Drizzle ORM**, and **Turborepo**.
 
-Run the following command:
+Designed to be simple, conventional, and maintainable without unnecessary abstractions.
 
-```sh
-npx create-turbo@latest
+---
+
+## Features
+
+* Administrator authentication (JWT)
+* Multi-user support
+* Notes with Markdown/plain text content
+* Categories
+* Tags
+* File attachments
+* External links
+* Full-text search
+* REST API
+* Swagger API documentation
+* PostgreSQL + Drizzle ORM
+* Local filesystem storage
+* Turborepo monorepo
+
+---
+
+## Tech Stack
+
+### Monorepo
+
+* Turborepo
+* pnpm
+
+### Backend
+
+* NestJS
+* PostgreSQL
+* Drizzle ORM
+* JWT Authentication
+* bcrypt
+* Multer
+* Swagger
+
+### Frontend
+
+* Next.js (App Router)
+* React
+* TypeScript
+
+---
+
+## Project Structure
+
+```text
+.
+├── apps
+│   ├── api
+│   └── web
+│
+├── packages
+│
+├── .env
+├── pnpm-workspace.yaml
+└── turbo.json
 ```
 
-## What's inside?
+---
 
-This Turborepo includes the following packages/apps:
+## Backend Features
 
-### Apps and Packages
+### Authentication
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+* Register
+* Login
+* JWT authentication
+* Password hashing with bcrypt
+* Multiple administrators
+* OAuth-ready architecture
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### Notes
 
-### Utilities
+* Create
+* Read
+* Update
+* Delete
 
-This Turborepo has some additional tools already setup for you:
+Fields
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+* title
+* slug
+* summary
+* content
+* status
+* timestamps
 
-### Build
+### Categories
 
-To build all apps and packages, run the following command:
+Many-to-many relationship with notes.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+### Tags
 
-```sh
-cd my-turborepo
-turbo build
+Many-to-many relationship with notes.
+
+### Attachments
+
+Supports
+
+* Images
+* PDF
+* ZIP
+* Documents
+
+Uploads are stored locally.
+
+Workflow
+
+```
+Upload
+    ↓
+temp/
+    ↓
+Database Success?
+    ├── Yes → storage/
+    └── No  → delete temp file
 ```
 
-Without global `turbo`, use your package manager:
+### External Links
 
-```sh
-cd my-turborepo
-npx turbo build
-pnpm dlx turbo build
-pnpm exec turbo build
+Each note can contain multiple URLs.
+
+### Search
+
+Search across
+
+* Title
+* Summary
+* Content
+
+Filters
+
+* Categories
+* Tags
+* Author
+* Created date
+* Updated date
+* Date range
+
+---
+
+## API
+
+RESTful endpoints.
+
+Example
+
+```
+POST   /auth/register
+POST   /auth/login
+
+GET    /notes
+GET    /notes/:id
+POST   /notes
+PATCH  /notes/:id
+DELETE /notes/:id
+
+GET    /categories
+GET    /tags
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+Swagger documentation is available for every endpoint.
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+---
 
-```sh
-turbo build --filter=docs
+## Environment
+
+Root `.env`
+
+```env
+DATABASE_URL=
+JWT_SECRET=
+
+FILE_STORAGE=
+TEMP_STORAGE=
 ```
 
-Without global `turbo`:
+The backend loads the root environment using NestJS `ConfigModule`.
 
-```sh
-npx turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+The frontend follows standard Next.js conventions with `.env.local`.
+
+---
+
+## Development Principles
+
+This project intentionally avoids unnecessary complexity.
+
+* Official CLIs only
+* Conventional project structure
+* No experimental tooling
+* Minimal abstractions
+* Standard NestJS patterns
+* Standard Next.js App Router
+* Standard Drizzle migrations
+* Easy to understand
+* Easy to extend
+
+---
+
+## Planned UI
+
+A clean three-column interface inspired by paper note-taking.
+
+```
+┌────────────┬───────────────────────┬──────────────────────────┐
+│ Categories │       Notes           │      Selected Note       │
+│ Tags       │ Search • Filters      │ Content                  │
+│ Filters    │ Note List             │ Attachments              │
+│            │                       │ URLs • Metadata          │
+└────────────┴───────────────────────┴──────────────────────────┘
 ```
 
-### Develop
+Design goals
 
-To develop all apps and packages, run the following command:
+* Warm off-white background
+* Small typography
+* Plenty of whitespace
+* Borderless layout
+* Minimal controls
+* Distraction-free writing experience
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+---
 
-```sh
-cd my-turborepo
-turbo dev
-```
+## Future Improvements
 
-Without global `turbo`, use your package manager:
+* Rich text editor
+* Drag & drop attachments
+* Google OAuth
+* GitHub OAuth
+* Dark mode
+* Keyboard shortcuts
+* Note history
+* Export/Import
+* AI-assisted search
+* Markdown preview
 
-```sh
-cd my-turborepo
-npx turbo dev
-pnpm exec turbo dev
-pnpm exec turbo dev
-```
+---
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## License
 
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo dev --filter=web
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
-
-```sh
-cd my-turborepo
-turbo login
-```
-
-Without global `turbo`, use your package manager:
-
-```sh
-cd my-turborepo
-npx turbo login
-pnpm exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
-
-```sh
-turbo link
-```
-
-Without global `turbo`:
-
-```sh
-npx turbo link
-pnpm exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+MIT
