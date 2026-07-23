@@ -148,7 +148,7 @@ export default function NoteEditor({
   };
 
   return (
-    <div className="p-8 max-w-3xl mx-auto">
+    <div className="p-8 mx-auto">
       {/* Zoom Modal */}
       {zoomImage && (
         <div
@@ -158,7 +158,7 @@ export default function NoteEditor({
           <img
             src={zoomImage}
             alt="Zoomed"
-            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+            className="max-w-full max-h-full object-contain rounded-md shadow-2xl"
           />
           <button className="absolute top-6 right-6 text-white text-3xl hover:text-ink-3">
             ×
@@ -166,7 +166,7 @@ export default function NoteEditor({
         </div>
       )}
 
-      <div className="bg-surface rounded-lg border border-line shadow-sm p-8">
+      <div className="bg-surface rounded-md border border-line shadow-sm p-8">
         {/* Header Row */}
         <div className="flex justify-between items-center mb-6 pb-4 border-b border-line">
           <div className="flex items-center gap-2">

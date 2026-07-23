@@ -15,7 +15,7 @@ export default function NoteList({
     <div className="flex flex-col h-full">
       {/* Search */}
       <div className="p-3.5 border-b border-line">
-        <div className="relative flex items-center bg-bg rounded-md px-3 py-2 border border-line">
+        <div className="relative flex items-center bg-bg rounded-sm px-3 py-2 border border-line">
           <Search size={14} className="text-ink-3 mr-2 flex-shrink-0" />
           <input
             type="text"
@@ -33,9 +33,9 @@ export default function NoteList({
           <button
             key={note.id}
             onClick={() => onSelectNote(note)}
-            className={`w-full text-left p-3 mb-1 rounded-md transition-all border ${
+            className={`w-full text-left p-3 mb-1 rounded-sm transition-all border ${
               selectedNoteId === note.id
-                ? "bg-surface border-line shadow-sm"
+                ? "bg-surface border-line"
                 : "border-transparent hover:bg-bg"
             }`}
           >

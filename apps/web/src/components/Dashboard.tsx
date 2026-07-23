@@ -6,6 +6,7 @@ import { Note, Category, Tag } from "@/lib/types";
 import Sidebar from "./Sidebar";
 import NoteList from "./NoteList";
 import NoteEditor from "./NoteEditor";
+import ManagerModal from "./ManagerModal";
 
 export default function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -16,6 +17,8 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [search, setSearch] = useState("");
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([]);
+
+  const [isManagerOpen, setIsManagerOpen] = useState(false);
 
   const loadData = useCallback(async () => {
     try {
@@ -91,8 +94,9 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
     <div className="h-screen flex flex-col bg-bg">
       {/* Header */}
       <header className="flex justify-between items-center h-14 px-6 bg-surface border-b border-line">
+        {/* ... header content ... */}
         <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center">
+          <div className="w-7 h-7 rounded-md bg-accent flex items-center justify-center">
             <svg
               width="15"
               height="15"
@@ -143,6 +147,7 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
               )
             }
             onDataChange={loadData}
+            onManageClick={() => setIsManagerOpen(true)} // <-- ADD PROP
           />
         </div>
 
@@ -170,29 +175,19 @@ export default function Dashboard({ onLogout }: { onLogout: () => void }) {
             />
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-ink-3">
-              <div className="w-14 h-14 rounded-xl bg-surface border border-line flex items-center justify-center mb-3">
-                <svg
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                  <path d="M14 2v6h6" />
-                  <path d="M16 13H8" />
-                  <path d="M16 17H8" />
-                  <path d="M10 9H8" />
-                </svg>
-              </div>
-              <p className="text-sm">Select a note to view</p>
+              {/* ... empty state content ... */}
             </div>
           )}
         </div>
       </div>
+
+      {/* <-- ADD MANAGER MODAL RENDER --> */}
+      {isManagerOpen && (
+        <ManagerModal
+          onClose={() => setIsManagerOpen(false)}
+          onDataChange={loadData}
+        />
+      )}
     </div>
   );
 }

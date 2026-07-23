@@ -13,7 +13,7 @@ export default function Modal({
       onClick={onClose}
     >
       <div
-        className="bg-surface p-7 w-full max-w-md rounded-lg border border-line shadow-xl"
+        className="bg-surface p-7 w-full max-w-md rounded-md border border-line shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center mb-5">

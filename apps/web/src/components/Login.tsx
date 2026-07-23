@@ -31,9 +31,9 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-bg">
-      <div className="w-full max-w-sm space-y-6 p-10 bg-surface rounded-lg border border-line shadow-sm">
+      <div className="w-full max-w-sm space-y-6 p-10 bg-surface rounded-md border border-line shadow-sm">
         <div className="text-center space-y-1.5">
-          <div className="w-10 h-10 mx-auto rounded-lg bg-accent flex items-center justify-center">
+          <div className="w-10 h-10 mx-auto rounded-md bg-accent flex items-center justify-center">
             <svg
               width="20"
               height="20"

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { and, eq, ilike } from 'drizzle-orm';
+import { and, eq, ilike, or } from 'drizzle-orm';
 import { DrizzleService } from '../database/drizzle.service';
 import { notes, noteCategories, noteTags, noteUrls } from '../database/schema';
 import { AttachmentsService } from '../attachments/attachments.service';
@@ -74,10 +74,16 @@ export class NotesService {
     const conditions = [];
 
     if (params.search) {
-      conditions.push(ilike(notes.title, `%${params.search}%`));
-      conditions.push(ilike(notes.summary, `%${params.search}%`));
-      conditions.push(ilike(notes.content, `%${params.search}%`));
+      // Use OR for search so it matches any of the fields
+      conditions.push(
+        or(
+          ilike(notes.title, `%${params.search}%`),
+          ilike(notes.summary, `%${params.search}%`),
+          ilike(notes.content, `%${params.search}%`),
+        ),
+      );
     }
+
     if (params.authorId) {
       conditions.push(eq(notes.userId, params.authorId));
     }
@@ -87,8 +93,8 @@ export class NotesService {
       with: {
         categories: { with: { category: true } },
         tags: { with: { tag: true } },
-        urls: true, // <-- ADD THIS
-        attachments: true, // <-- ADD THIS
+        urls: true,
+        attachments: true,
         user: true,
       },
     });
