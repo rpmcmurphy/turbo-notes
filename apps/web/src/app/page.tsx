@@ -12,9 +12,14 @@ export default function Home() {
     setIsAuth(!!token);
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsAuth(false);
+  };
+
   if (!isAuth) {
     return <Login onLogin={() => setIsAuth(true)} />;
   }
 
-  return <Dashboard onLogout={() => setIsAuth(false)} />;
+  return <Dashboard onLogout={handleLogout} />;
 }

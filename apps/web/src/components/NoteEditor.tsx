@@ -109,8 +109,14 @@ export default function NoteEditor({
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.length) return;
 
-    const newPreviews = [];
-    const newMetas = [];
+    const newPreviews: { url: string; isImage: boolean; name: string }[] = [];
+    const newMetas: {
+      originalName: string;
+      filename: string;
+      mimetype: string;
+      path: string;
+      size: number;
+    }[] = [];
 
     try {
       for (const file of Array.from(e.target.files)) {
