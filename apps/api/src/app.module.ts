@@ -17,7 +17,7 @@ import { AttachmentsModule } from './attachments/attachments.module';
       isGlobal: true,
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', '..', '..', 'storage'),
+      rootPath: join(process.cwd(), 'storage'),
       serveRoot: '/storage',
     }),
     DatabaseModule,

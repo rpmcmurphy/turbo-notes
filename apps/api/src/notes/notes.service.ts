@@ -163,6 +163,23 @@ export class NotesService {
       }
     }
 
+    // Handle URLs update
+    if (dto.urls) {
+      await this.drizzle.client.delete(noteUrls).where(eq(noteUrls.noteId, id));
+      if (dto.urls.length > 0) {
+        await this.drizzle.client
+          .insert(noteUrls)
+          .values(dto.urls.map((url) => ({ noteId: id, ...url })));
+      }
+    }
+
+    // Handle Attachments (Move from temp to storage and save to DB)
+    if (dto.attachments && dto.attachments.length > 0) {
+      for (const fileMeta of dto.attachments) {
+        await this.attachmentsService.moveToStorage(id, fileMeta);
+      }
+    }
+
     return this.findOne(id);
   }
 

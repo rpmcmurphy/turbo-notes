@@ -30,9 +30,9 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-paper">
-      <div className="w-full max-w-xs space-y-6">
-        <h1 className="text-lg font-medium text-center text-ink">
+    <div className="min-h-screen flex items-center justify-center bg-stone-100">
+      <div className="w-full max-w-sm space-y-6 bg-white p-8 border border-stone-200 rounded-lg shadow-sm">
+        <h1 className="text-xl font-semibold text-center text-stone-800">
           {isRegister ? "Create Admin Account" : "Login"}
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -42,7 +42,7 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 bg-transparent border-b border-stone-300 focus:outline-none focus:border-ink text-sm"
+              className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-300 text-sm"
               required
             />
           )}
@@ -51,7 +51,7 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 bg-transparent border-b border-stone-300 focus:outline-none focus:border-ink text-sm"
+            className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-300 text-sm"
             required
           />
           <input
@@ -59,20 +59,20 @@ export default function Login({ onLogin }: { onLogin: () => void }) {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 bg-transparent border-b border-stone-300 focus:outline-none focus:border-ink text-sm"
+            className="w-full px-3 py-2 bg-stone-50 border border-stone-200 rounded-md focus:outline-none focus:ring-2 focus:ring-stone-300 text-sm"
             required
           />
           {error && <p className="text-red-500 text-xs">{error}</p>}
           <button
             type="submit"
-            className="w-full py-2 text-center text-stone-600 hover:text-ink transition-colors"
+            className="w-full py-2 text-center text-white bg-stone-800 hover:bg-stone-700 transition-colors rounded-md text-sm font-medium"
           >
             {isRegister ? "Register" : "Sign In"}
           </button>
         </form>
         <button
           onClick={() => setIsRegister(!isRegister)}
-          className="w-full text-xs text-stone-400 hover:text-stone-600"
+          className="w-full text-xs text-stone-500 hover:text-stone-700"
         >
           {isRegister
             ? "Already have an account? Login"
