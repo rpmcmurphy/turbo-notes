@@ -70,19 +70,21 @@ export class NotesService {
         );
       }
 
-      // ==========================================
-      // GEMINI 2.0 TAG GENERATION
-      // ==========================================
-      const generatedTagNames = await this.geminiService.generateTags(
-        dto.title,
-        dto.content,
-      );
-      const generatedTagIds = await this.resolveTagIds(generatedTagNames);
+      // // ==========================================
+      // // GEMINI 2.0 TAG GENERATION
+      // // ==========================================
+      // const generatedTagNames = await this.geminiService.generateTags(
+      //   dto.title,
+      //   dto.content,
+      // );
+      // const generatedTagIds = await this.resolveTagIds(generatedTagNames);
 
-      // Combine user tags (if any) with AI tags, removing duplicates
-      const allTagIds = [
-        ...new Set([...(dto.tagIds || []), ...generatedTagIds]),
-      ];
+      // // Combine user tags (if any) with AI tags, removing duplicates
+      // const allTagIds = [
+      //   ...new Set([...(dto.tagIds || []), ...generatedTagIds]),
+      // ];
+
+      const allTagIds = dto.tagIds || [];
 
       if (allTagIds.length) {
         await this.drizzle.client
