@@ -1,20 +1,15 @@
 {
-  "name": "my-turborepo",
+  "name": "turbo-notes",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
     "dev": "turbo run dev",
+    "build": "turbo run build",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "check-types": "turbo run check-types"
+    "dev:api": "turbo run dev --filter=api",
+    "dev:web": "turbo run dev --filter=web"
   },
   "devDependencies": {
-    "prettier": "^3.7.4",
-    "turbo": "^2.10.6",
-    "typescript": "5.9.2"
+    "turbo": "latest"
   },
-  "packageManager": "pnpm@9.0.0",
-  "engines": {
-    "node": ">=18"
-  }
+  "packageManager": "pnpm@10.31.0"
 }
