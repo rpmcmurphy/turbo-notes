@@ -1,16 +1,48 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { and, eq, ilike, or } from 'drizzle-orm';
 import { DrizzleService } from '../database/drizzle.service';
-import { notes, noteCategories, noteTags, noteUrls } from '../database/schema';
+import {
+  notes,
+  noteCategories,
+  noteTags,
+  noteUrls,
+  tags,
+} from '../database/schema';
 import { AttachmentsService } from '../attachments/attachments.service';
 import { CreateNoteDto } from './dto/create-note.dto';
+import { GeminiService } from '../gemini/gemini.service';
 
 @Injectable()
 export class NotesService {
   constructor(
     private drizzle: DrizzleService,
     private attachmentsService: AttachmentsService,
+    private geminiService: GeminiService,
   ) {}
+
+  private async resolveTagIds(tagNames: string[]): Promise<string[]> {
+    const tagIds: string[] = [];
+
+    for (const name of tagNames) {
+      const [existingTag] = await this.drizzle.client
+        .select()
+        .from(tags)
+        .where(eq(tags.name, name))
+        .limit(1);
+
+      if (existingTag) {
+        tagIds.push(existingTag.id);
+      } else {
+        const [newTag] = await this.drizzle.client
+          .insert(tags)
+          .values({ name })
+          .returning();
+        tagIds.push(newTag.id);
+      }
+    }
+
+    return tagIds;
+  }
 
   async create(dto: CreateNoteDto, userId: string) {
     const tempAttachments = dto.attachments || [];
@@ -38,11 +70,26 @@ export class NotesService {
         );
       }
 
-      if (dto.tagIds?.length) {
+      // ==========================================
+      // GEMINI 2.0 TAG GENERATION
+      // ==========================================
+      const generatedTagNames = await this.geminiService.generateTags(
+        dto.title,
+        dto.content,
+      );
+      const generatedTagIds = await this.resolveTagIds(generatedTagNames);
+
+      // Combine user tags (if any) with AI tags, removing duplicates
+      const allTagIds = [
+        ...new Set([...(dto.tagIds || []), ...generatedTagIds]),
+      ];
+
+      if (allTagIds.length) {
         await this.drizzle.client
           .insert(noteTags)
-          .values(dto.tagIds.map((tagId) => ({ noteId: note.id, tagId })));
+          .values(allTagIds.map((tagId) => ({ noteId: note.id, tagId })));
       }
+      // ==========================================
 
       if (dto.urls?.length) {
         await this.drizzle.client
